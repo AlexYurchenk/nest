@@ -10,6 +10,8 @@ export const getMongoConfig = async (
       configService.get('DATABASE_USER') +
       ':' +
       configService.get('DATABASE_PASSWORD') +
-      '@shop.obphg.mongodb.net/test?authSource=admin&replicaSet=atlas-6yhzu7-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true',
+      '@shop.obphg.mongodb.net/' +
+      configService.get('DATABASE_NAME') +
+      '?authSource=admin&replicaSet=atlas-6yhzu7-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true',
   };
 };
