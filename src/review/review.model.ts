@@ -3,4 +3,5 @@ export class ReviewModel {
   title: string;
   description: string;
   rating: number;
+  productId: string;
 }

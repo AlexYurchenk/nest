@@ -16,23 +16,23 @@ import { FindTopPageDto } from './dto/find-top-page.dto';
 export class TopPageController {
   @Post('create')
   async create(@Body() dto: CreatedTopPageDto) {
-    return '';
+    return 'top-page -create';
   }
   @Get(':id')
   async get(@Param('id') id: string) {
-    return '';
+    return 'top-page -get';
   }
-  @Delete('id')
+  @Delete(':id')
   async delete(@Param('id') id: string) {
-    return '';
+    return 'top-page -delete';
   }
-  @Patch('id')
+  @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: TopPageModel) {
-    return '';
+    return 'top-page -update';
   }
   @HttpCode(200)
   @Post()
   async find(@Body() dto: FindTopPageDto) {
-    return '';
+    return 'top-page -find';
   }
 }

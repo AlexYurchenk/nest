@@ -3,4 +3,5 @@ export class CreatedReviewDto {
   title: string;
   description: string;
   rating: number;
+  productId: string;
 }

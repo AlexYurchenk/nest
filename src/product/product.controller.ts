@@ -16,23 +16,23 @@ import {
 export class ProductController {
   @Post('create')
   async create(@Body() dto: CreatedProductDto) {
-    return '';
+    return 'product -create';
   }
   @Get(':id')
   async get(@Param('id') id: string) {
-    return '';
+    return 'product -get';
   }
-  @Delete('id')
+  @Delete(':id')
   async delete(@Param('id') id: string) {
-    return '';
+    return 'product -delete';
   }
-  @Patch('id')
+  @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: ProductModel) {
-    return '';
+    return 'product -update';
   }
   @HttpCode(200)
   @Post()
   async find(@Body() dto: FindProductDto) {
-    return '';
+    return 'product -find';
   }
 }

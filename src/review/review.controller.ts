@@ -5,14 +5,14 @@ import { CreatedReviewDto } from './dto/created-revirw.dto';
 export class ReviewController {
   @Post('create')
   async create(@Body() dto: CreatedReviewDto) {
-    return '';
+    return 'review - create';
   }
-  @Delete('id')
+  @Delete(':id')
   async delete(@Param('id') id: string) {
-    return '';
+    return 'review -delete';
   }
   @Get('byProduct/:id')
   async get(@Param('id') id: string) {
-    return '';
+    return 'review -geTbyProduct';
   }
 }
