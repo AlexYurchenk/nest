@@ -6,33 +6,57 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpException,
+  HttpStatus,
   Param,
   Patch,
   Post,
 } from '@nestjs/common';
 import { FindTopPageDto } from './dto/find-top-page.dto';
+import { TopPageService } from './top-page.service';
+import { TOP_PAGE_NOT_FOUNDED } from './top-page.constants';
 
 @Controller('top-page')
 export class TopPageController {
+  constructor(private readonly topPageService: TopPageService) {}
+
   @Post('create')
   async create(@Body() dto: CreatedTopPageDto) {
-    return 'top-page -create';
+    return this.topPageService.create(dto);
   }
   @Get(':id')
   async get(@Param('id') id: string) {
-    return 'top-page -get';
+    const result = await this.topPageService.findPageById(id);
+    if (!result) {
+      throw new HttpException(TOP_PAGE_NOT_FOUNDED, HttpStatus.NOT_FOUND);
+    } else {
+      return result;
+    }
   }
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    return 'top-page -delete';
+    const result = await this.topPageService.delete(id);
+    if (!result) {
+      throw new HttpException(TOP_PAGE_NOT_FOUNDED, HttpStatus.NOT_FOUND);
+    }
   }
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: TopPageModel) {
-    return 'top-page -update';
+    const result = await this.topPageService.update(id, dto);
+    if (!result) {
+      throw new HttpException(TOP_PAGE_NOT_FOUNDED, HttpStatus.NOT_FOUND);
+    } else {
+      return result;
+    }
   }
   @HttpCode(200)
   @Post()
   async find(@Body() dto: FindTopPageDto) {
-    return 'top-page -find';
+    const result = await this.topPageService.findByCategory(dto);
+    if (!result) {
+      throw new HttpException(TOP_PAGE_NOT_FOUNDED, HttpStatus.NOT_FOUND);
+    } else {
+      return result;
+    }
   }
 }
