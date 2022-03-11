@@ -11,12 +11,13 @@ import {
   Post,
 } from '@nestjs/common';
 import { FindTopPageDto } from './dto/find-top-page.dto';
-
+import { ConfigService } from '@nestjs/config';
 @Controller('top-page')
 export class TopPageController {
+  constructor(private readonly configService: ConfigService) {}
   @Post('create')
   async create(@Body() dto: CreatedTopPageDto) {
-    return 'top-page -create';
+    return 'top-page -create' + this.configService.get('DATABASE_PASSWORD');
   }
   @Get(':id')
   async get(@Param('id') id: string) {
