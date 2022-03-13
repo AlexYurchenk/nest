@@ -181,6 +181,18 @@ describe('AppController (e2e)', () => {
         expect(createdReviewId).toBeDefined();
       });
   });
+  it('/review/create (POST) --fail', () => {
+    return request(app.getHttpServer())
+      .post('/review/create')
+      .send(
+        (testReviewDto = {
+          ...testReviewDto,
+          productId: createProductId,
+          rating: 0,
+        }),
+      )
+      .expect(400);
+  });
   it('/review/byProduct/:id (GET)', async () => {
     return request(app.getHttpServer())
       .get('/review/byProduct/' + createProductId)

@@ -12,6 +12,8 @@ import {
   Param,
   Patch,
   Post,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { PRODUCT_NOT_FOUNDED } from './product.constants';
@@ -19,7 +21,7 @@ import { PRODUCT_NOT_FOUNDED } from './product.constants';
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
-
+  @UsePipes(new ValidationPipe())
   @Post('create')
   async create(@Body() dto: CreatedProductDto) {
     return this.productService.create(dto);
@@ -49,6 +51,7 @@ export class ProductController {
       return result;
     }
   }
+  @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post()
   async find(@Body() dto: FindProductDto) {

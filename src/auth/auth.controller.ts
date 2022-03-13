@@ -6,6 +6,8 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoginAuthDto } from './dto/auth-login.dto';
 import { RegistrationAuthDto } from './dto/auth-registration.dto';
@@ -14,11 +16,12 @@ import { USER_NOT_FOUNDED } from './auth.constants';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
+  @UsePipes(new ValidationPipe())
   @Post('registration')
   async registration(@Body() dto: RegistrationAuthDto) {
     return this.authService.registration(dto);
   }
+  @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('login')
   async login(@Body() dto: LoginAuthDto) {
