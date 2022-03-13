@@ -26,6 +26,15 @@ export class ReviewController {
       throw new HttpException(REVIEW_NOT_FOUNDED, HttpStatus.NOT_FOUND);
     }
   }
+  @Delete('deleteAllReviewsByProductId/:id')
+  async deleteByProductId(@Param('id') id: string) {
+    const result = await this.reviewService.deleteAllReviewsByProductId(id);
+    if (!result) {
+      throw new HttpException(REVIEW_NOT_FOUNDED, HttpStatus.NOT_FOUND);
+    } else {
+      return result;
+    }
+  }
   @Get('byProduct/:id')
   async get(@Param('id') id: string) {
     return this.reviewService.findByProductId(id);

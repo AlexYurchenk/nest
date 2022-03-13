@@ -12,6 +12,7 @@ export class ReviewService {
     private readonly reviewModel: ModelType<ReviewModel>,
   ) {}
   async create(dto: CreatedReviewDto): Promise<DocumentType<ReviewModel>> {
+    dto.productId = new Types.ObjectId(dto.productId);
     return this.reviewModel.create(dto);
   }
   async delete(id: string): Promise<DocumentType<ReviewModel> | null> {

@@ -1,3 +1,8 @@
+class ProductCharacteristic {
+  name: string;
+  value: string;
+}
+
 export class CreatedProductDto {
   image: string;
   title: string;
@@ -9,8 +14,6 @@ export class CreatedProductDto {
   advantages: string;
   disadvantages: string;
   categories: string[];
-  tags: string;
-  characteristic: {
-    [key: string]: string;
-  };
+  tags: string[];
+  characteristic: ProductCharacteristic[];
 }
