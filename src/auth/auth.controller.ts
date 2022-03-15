@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { LoginAuthDto } from './dto/auth-login.dto';
 import { RegistrationAuthDto } from './dto/auth-registration.dto';
-import { USER_NOT_FOUNDED } from './auth.constants';
+import { USER_NOT_FOUNDED, USER_HAS_ALREADY_EXISTED } from './auth.constants';
 
 @Controller('auth')
 export class AuthController {
@@ -19,17 +19,17 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @Post('registration')
   async registration(@Body() dto: RegistrationAuthDto) {
+    const oldUser = await this.authService.findUser(dto.email);
+    if (oldUser) {
+      throw new HttpException(USER_HAS_ALREADY_EXISTED, HttpStatus.BAD_REQUEST);
+    }
     return this.authService.registration(dto);
   }
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('login')
   async login(@Body() dto: LoginAuthDto) {
-    const result = await this.authService.login(dto);
-    if (!result) {
-      throw new HttpException(USER_NOT_FOUNDED, HttpStatus.NOT_FOUND);
-    } else {
-      return result;
-    }
+    const { _id } = await this.authService.validateUser(dto);
+    return this.authService.login(_id);
   }
 }
