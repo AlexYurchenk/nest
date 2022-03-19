@@ -63,13 +63,20 @@ export class TopPageController {
   }
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
-  @Post()
+  @Post('find')
   async find(@Body() dto: FindTopPageDto) {
     const result = await this.topPageService.findByCategory(dto);
     if (!result) {
       throw new HttpException(TOP_PAGE_NOT_FOUNDED, HttpStatus.NOT_FOUND);
-    } else {
-      return result;
     }
+    return result;
+  }
+  @Get('textSearch/:text')
+  async textSearch(@Param('text') text: string) {
+    const result = await this.topPageService.findPageByText(text);
+    if (!result) {
+      throw new HttpException(TOP_PAGE_NOT_FOUNDED, HttpStatus.NOT_FOUND);
+    }
+    return result;
   }
 }

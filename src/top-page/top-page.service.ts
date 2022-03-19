@@ -21,6 +21,16 @@ export class TopPageService {
   async findPageById(id: string): Promise<DocumentType<TopPageModel> | null> {
     return this.topPageModel.findById(id).exec();
   }
+  async findPageByText(text: string) {
+    return await this.topPageModel
+      .find({
+        $text: {
+          $search: text,
+          $caseSensitive: false,
+        },
+      })
+      .exec();
+  }
   async update(
     id: string,
     dto: TopPageModel,
@@ -29,40 +39,12 @@ export class TopPageService {
   }
   async findByCategory(dto: FindTopPageDto) {
     return this.topPageModel
-      .aggregate([
-        { $match: { firstCategory: dto.firstCategory } },
-        { $sort: { _id: 1 } },
-        {
-          $lookup: {
-            from: 'Product',
-            localField: 'category',
-            foreignField: 'categories',
-            as: 'products',
-          },
-        },
-        {
-          $addFields: {
-            productCount: { $size: '$products' },
-            products: {
-              $function: {
-                body: function (products: ProductModel[]) {
-                  products.sort(function (a, b) {
-                    return (
-                      new Date(b.createdAt).getTime() -
-                      new Date(a.createdAt).getTime()
-                    );
-                  });
-
-                  return products;
-                },
-                args: ['$products'],
-                langs: 'js',
-                lang: 'js',
-              },
-            },
-          },
-        },
-      ])
+      .aggregate()
+      .match({ firstCategory: dto.firstCategory })
+      .group({
+        _id: { secondCategory: '$secondCategory' },
+        pages: { $push: { alias: '$alias', title: '$title' } },
+      })
       .exec();
   }
 }
