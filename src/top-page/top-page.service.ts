@@ -1,3 +1,4 @@
+import { ProductModel } from './../product/product.model';
 import { TopPageModel } from './top-page.model';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
@@ -20,12 +21,48 @@ export class TopPageService {
   async findPageById(id: string): Promise<DocumentType<TopPageModel> | null> {
     return this.topPageModel.findById(id).exec();
   }
-  async update(id: string, dto: TopPageModel) {
-    return this.topPageModel.findByIdAndUpdate(id, dto).exec();
+  async update(
+    id: string,
+    dto: TopPageModel,
+  ): Promise<DocumentType<TopPageModel> | null> {
+    return this.topPageModel.findByIdAndUpdate(id, dto, { new: true }).exec();
   }
-  async findByCategory(
-    dto: FindTopPageDto,
-  ): Promise<DocumentType<TopPageModel>[] | null> {
-    return this.topPageModel.find({ firstCategory: dto.firstCategory }).exec();
+  async findByCategory(dto: FindTopPageDto) {
+    return this.topPageModel
+      .aggregate([
+        { $match: { firstCategory: dto.firstCategory } },
+        { $sort: { _id: 1 } },
+        {
+          $lookup: {
+            from: 'Product',
+            localField: 'category',
+            foreignField: 'categories',
+            as: 'products',
+          },
+        },
+        {
+          $addFields: {
+            productCount: { $size: '$products' },
+            products: {
+              $function: {
+                body: function (products: ProductModel[]) {
+                  products.sort(function (a, b) {
+                    return (
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime()
+                    );
+                  });
+
+                  return products;
+                },
+                args: ['$products'],
+                langs: 'js',
+                lang: 'js',
+              },
+            },
+          },
+        },
+      ])
+      .exec();
   }
 }

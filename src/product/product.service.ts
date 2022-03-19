@@ -1,3 +1,4 @@
+import { ReviewModel } from './../review/review.model';
 import { FindProductDto } from './dto/find-product.dto';
 import { CreatedProductDto } from './dto/created-product.dto';
 import { Injectable } from '@nestjs/common';
@@ -15,7 +16,7 @@ export class ProductService {
     return this.productModel.create(dto);
   }
   async findById(id: string): Promise<DocumentType<ProductModel> | null> {
-    return this.productModel.findById(id);
+    return this.productModel.findById(id).exec();
   }
   async delete(id: string): Promise<DocumentType<ProductModel> | null> {
     return this.productModel.findByIdAndDelete(id);
@@ -24,13 +25,46 @@ export class ProductService {
     id: string,
     dto: ProductModel,
   ): Promise<DocumentType<ProductModel> | null> {
-    return this.productModel.findByIdAndUpdate(id, dto);
+    return this.productModel.findByIdAndUpdate(id, dto, { new: true }).exec();
   }
-  async findByCategory(
-    dto: FindProductDto,
-  ): Promise<DocumentType<ProductModel>[]> {
+  async findByCategory(dto: FindProductDto) {
     return this.productModel
-      .find({ categories: { $all: [dto.category] } })
-      .limit(dto.limit);
+      .aggregate([
+        { $match: { categories: dto.category } },
+        { $sort: { _id: 1 } },
+        { $limit: dto.limit },
+        {
+          $lookup: {
+            from: 'Review',
+            localField: '_id',
+            foreignField: 'productId',
+            as: 'reviews',
+          },
+        },
+        {
+          $addFields: {
+            reviewCount: { $size: '$reviews' },
+            reviewAvg: { $avg: '$reviews.rating' },
+            reviews: {
+              $function: {
+                body: function (reviews: ReviewModel[]) {
+                  reviews.sort(function (a, b) {
+                    return (
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime()
+                    );
+                  });
+
+                  return reviews;
+                },
+                args: ['$reviews'],
+                langs: 'js',
+                lang: 'js',
+              },
+            },
+          },
+        },
+      ])
+      .exec();
   }
 }

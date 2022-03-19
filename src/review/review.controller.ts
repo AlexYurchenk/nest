@@ -1,5 +1,7 @@
+import { UserId } from './../decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ReviewService } from './review.service';
+
 import {
   Body,
   Controller,
@@ -15,6 +17,7 @@ import {
 } from '@nestjs/common';
 import { CreatedReviewDto } from './dto/created-revirw.dto';
 import { REVIEW_NOT_FOUNDED } from './review.constants';
+import { IdValidationPipe } from 'src/pipes/id-validation.pipe';
 
 @Controller('review')
 export class ReviewController {
@@ -27,7 +30,7 @@ export class ReviewController {
   }
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id', IdValidationPipe) id: string) {
     const result = await this.reviewService.delete(id);
     if (!result) {
       throw new HttpException(REVIEW_NOT_FOUNDED, HttpStatus.NOT_FOUND);
@@ -35,7 +38,7 @@ export class ReviewController {
   }
   @UseGuards(JwtAuthGuard)
   @Delete('deleteAllReviewsByProductId/:id')
-  async deleteByProductId(@Param('id') id: string) {
+  async deleteByProductId(@Param('id', IdValidationPipe) id: string) {
     const result = await this.reviewService.deleteAllReviewsByProductId(id);
     if (!result) {
       throw new HttpException(REVIEW_NOT_FOUNDED, HttpStatus.NOT_FOUND);
@@ -44,7 +47,8 @@ export class ReviewController {
     }
   }
   @Get('byProduct/:id')
-  async get(@Param('id') id: string) {
+  async get(@Param('id', IdValidationPipe) id: string, @UserId() user: string) {
+    console.log(await user);
     return this.reviewService.findByProductId(id);
   }
 }

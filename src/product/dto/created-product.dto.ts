@@ -1,4 +1,10 @@
-import { IsString, IsNumber, IsArray, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsArray,
+  ValidateNested,
+  IsOptional,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class ProductCharacteristic {
@@ -15,6 +21,7 @@ export class CreatedProductDto {
   title: string;
   @IsNumber()
   price: number;
+  @IsOptional()
   @IsNumber()
   oldPrice?: number;
   @IsNumber()
