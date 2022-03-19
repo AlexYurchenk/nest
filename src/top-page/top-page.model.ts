@@ -1,23 +1,49 @@
+/* eslint-disable @typescript-eslint/no-empty-interface */
+import { prop, index } from '@typegoose/typegoose';
+import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+export interface TopPageModel extends Base {}
 export enum TopLevelCategory {
   Books,
   Products,
   Courses,
   Services,
 }
-
-export class TopPageModel {
-  firstCategory: TopLevelCategory;
-  secondCategory: string;
+class TopPageHh {
+  @prop()
+  count: number;
+  @prop()
+  juniorSalary: number;
+  @prop()
+  middleSalary: number;
+  @prop()
+  seniorSalary: number;
+}
+class TopPageAdvantage {
+  @prop()
   title: string;
+  @prop()
+  description: string;
+}
+@index({ '$**': 'text' })
+export class TopPageModel extends TimeStamps {
+  @prop({ enum: TopLevelCategory })
+  firstCategory: TopLevelCategory;
+  @prop()
+  secondCategory: string;
+  @prop()
+  alias: string;
+  @prop()
+  title: string;
+  @prop()
   category: string;
-  hh?: {
-    count: number;
-    juniorSalary: number;
-    middleSalary: number;
-    seniorSalary: number;
-  };
-  advantages: { title: string; description: string }[];
+  @prop()
+  hh?: TopPageHh;
+  @prop({ type: () => [TopPageAdvantage] })
+  advantages: TopPageAdvantage[];
+  @prop()
   seoText: string;
+  @prop()
   tagsTitle: string;
+  @prop({ type: () => [String] })
   tags: string[];
 }
