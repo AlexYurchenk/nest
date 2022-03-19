@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { LoginAuthDto } from './dto/auth-login.dto';
 import { RegistrationAuthDto } from './dto/auth-registration.dto';
-import { USER_NOT_FOUNDED, USER_HAS_ALREADY_EXISTED } from './auth.constants';
+import { USER_HAS_ALREADY_EXISTED } from './auth.constants';
 
 @Controller('auth')
 export class AuthController {
