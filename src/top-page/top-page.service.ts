@@ -1,4 +1,3 @@
-import { ProductModel } from './../product/product.model';
 import { TopPageModel } from './top-page.model';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
@@ -46,5 +45,8 @@ export class TopPageService {
         pages: { $push: { alias: '$alias', title: '$title' } },
       })
       .exec();
+  }
+  async findAll() {
+    return this.topPageModel.find({}).exec();
   }
 }
